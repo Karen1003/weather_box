@@ -1,0 +1,237 @@
+$color_white: #f3f3f3
+$color_yellow: #FFD633
+$color_black: #222
+$color_blue_start: #19283D
+$color_blue_end: #1D678F
+$color_rain: #4DACFF
+$color_white_cloud: #f2f9fe
+$color_grey_cloud: #ccc
+    
+*
+    // border: solid 1px black
+    position: relative
+    font-family: 'Hind Vadodara',sans-serif,微軟正黑體
+
+@mixin size($w,$h)
+    width: $w
+    height: $h
+
+html,body
+    height: 100%
+    width: 100%
+    padding: 0px
+    margin: 0px
+    display: flex //裡面的排列方式用flex來設定
+    justify-content: center
+    align-items: center
+    background-color: $color_black
+    
+label
+    cursor: pointer
+
+.daybox
+    width: 50%
+    max-width: 400px
+    background-color: $color_white
+    box-shadow: 0px 0px 20px rgba(black,0.5)
+    border-radius: 5px
+    cursor: pointer
+
+
+    &:hover //滑鼠進去浮出來的樣子
+        .bottom
+            height: 100px
+            .dayweather
+                opacity: 1
+                top: 0px
+
+    .top
+        height: 330px
+        background: linear-gradient(20deg,$color_blue_start,$color_blue_end)//漸層填色用background
+        //做天色漸暗的效果
+        background-size: 100% 300%
+        animation: daylight 10s both //動畫前後填滿不要有停頓跳轉
+        border-radius: 5px 5px 0px 0px
+
+        @keyframes daylight
+            0%
+                background-position: 100% 30%
+            100%
+                background-position: 100% 100%
+    .moon
+        +size(50px,50px)
+        border-radius: 100%
+        box-shadow: 15px -15px
+        position: absolute
+        left: 50px
+        top: 100px
+        animation: moonmove 10s infinite
+    @keyframes moonmove
+        0%
+            box-shadow: 15px -15px $color_yellow
+            transform: translateX(-15px) translateY(15px)//陰影不動本體移動
+            
+        100%
+            box-shadow: -30px 30px $color_yellow
+            transform: translateX(30px) translateY(-30px)
+            
+
+
+    .cloud
+        +size(100px,36px)
+        position: absolute
+        left: 200px
+        bottom: 50px
+        border-radius: 20px
+        animation: clouddrift 4s infinite
+        background-color: $color_white
+        box-shadow: 0px 0px 20px rgba(black,0.5)
+        &:before,&:after
+            content: ""
+            // border: solid 1px //讓before after框出來
+            display: block //可變成一般的div操作
+            +size(50px,50px)
+            border-radius: 100%
+            position: absolute
+            background-color: $color_white
+        &:before
+            left: 16px
+            top: -28px
+        &:after
+            left: 35px
+            top: -20px
+        @keyframes clouddrift
+            0%
+                transform: translateY(0px)
+            50%
+                transform: translateY(-10px)
+            100%
+                transform: translateY(0px)
+
+        .rain
+            +size(2px,10px)
+            position: absolute
+            left: 45px
+            bottom: 15px
+            animation: raindrop 1s infinite linear
+            background-color: $color_white
+
+        .rain2
+            left: 70px
+            bottom: 20px
+            animation-delay: -0.4s //-代表一開始狀態就要是掉下來的
+
+        .rain3
+            left: 30px
+            bottom: 20px
+            animation-delay: -0.7s
+
+        @keyframes raindrop
+            0%
+                transform: translateY(0px)
+            100%
+                transform: translateY(50px)
+                opacity: 0
+                
+
+
+    .temsvg
+        width: 100%
+        circle
+            fill: $color_white
+            opacity: 0.2
+        polyline
+            stroke: $color_white
+            stroke-width: 1px
+            fill: none
+            opacity: 0.2
+        text
+            fill: $color_white
+            transform: translateX(-30px) translateY(20px)
+            font-size: 15px
+            opacity: 0
+            
+            
+            
+    .text_area
+        display: inline-block
+        position: absolute
+        bottom: 25px
+        left: 25px
+        color: $color_white
+
+        .temperature
+            font-size: 75px
+            line-height: 80px //調整文字的行高擠開空格
+
+        .infos
+            font-size: 13px
+            opacity: 0.5 //調透明一點
+
+    .moon,.cloud
+        transition: 1s
+    .temsvg
+        circle
+            transition: 1s
+        polyline
+            transition: 1s 0.5s //延緩0.5s
+        text
+            transition: 1s 1s
+
+    #switch_night
+        display: none
+    #switch_night:checked+.top 
+        .moon,.cloud
+            opacity: 0.2
+        .temsvg 
+            circle,polyline,text
+                opacity: 1
+
+
+
+    .bottom
+        height: 10px
+        overflow: hidden
+        transition-duration: 2s
+        display: flex //專門排版用的可以解決7個框中間有空格的問題
+        justify-content: center //7個框置中
+        box-shadow: 0px 0px 20px rgba(black,0.5)
+        border-radius: 0px 0px 5px 5px 
+        .dayweather
+            display: inline-block 
+            text-align: center
+            width: calc( 100% / 7 - 5px )
+            opacity: 0
+            top: 20px
+            transition: 0.5s
+            h3
+                font-size: 8px
+                letter-spacing: 1px
+            svg
+                width: 100%
+                max-width: 40px //圖標最多為正方形
+                height: 40px
+                .sun
+                    fill: $color_yellow
+                    stroke: rgba($color_yellow,0.5)
+                    stroke-width: 30px
+                    stroke-dasharray: 5px
+                .rain
+                    stroke: $color_rain
+                    animation: raindrop 1s infinite linear
+                .cloud
+                    fill: $color_grey_cloud
+        .dayweather:nth-child(1)
+            transition-delay: 0.2s
+        .dayweather:nth-child(2)
+            transition-delay: 0.4s
+        .dayweather:nth-child(3)
+            transition-delay: 0.6s
+        .dayweather:nth-child(4)
+            transition-delay: 0.8s
+        .dayweather:nth-child(5)
+            transition-delay: 1s
+        .dayweather:nth-child(6)
+            transition-delay: 1.2s
+        .dayweather:nth-child(7)
+            transition-delay: 1.4s
